@@ -96,3 +96,14 @@ def load_watchlist():
         codes = json.load(file)
 
     return codes
+def get_volume_grade(volume_ratio):
+    if volume_ratio >= 3:
+        return "💥 거래량폭발"
+
+    if volume_ratio >= 2:
+        return "🚀 수급유입"
+
+    if volume_ratio >= 1.5:
+        return "👀 관심"
+
+    return "보통"

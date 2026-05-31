@@ -4,7 +4,7 @@ from stock import get_average_volume
 from stock import load_watchlist
 from stock import check_signal
 from stock import SIGNAL, STRONG_SIGNAL, NO_SIGNAL
-
+from stock import get_volume_grade
 
 app = Flask(__name__)
 
@@ -32,6 +32,7 @@ def home():
             <th>거래량배수</th>
             <th>상승률</th>
             <th>신호</th>
+            <th>거래량평가</th>
         </tr>
     """
 
@@ -41,6 +42,7 @@ def home():
         avg_volume = get_average_volume(code)
 
         volume_ratio = data["volume"] / avg_volume
+        volume_grade = get_volume_grade(volume_ratio)
 
         signal = check_signal(data)
 
@@ -62,6 +64,7 @@ def home():
             <td>{volume_ratio:.2f}배</td>
             <td>{data['change_rate']}%</td>
             <td>{signal_text}</td>
+            <td>{volume_grade}</td>
         </tr>
         """
 
