@@ -6,6 +6,8 @@ from stock import load_watchlist
 from stock import check_signal
 from stock import SIGNAL, STRONG_SIGNAL, NO_SIGNAL
 from stock import get_volume_grade
+from stock import get_flow_grade
+
 
 app = Flask(__name__)
 
@@ -34,6 +36,7 @@ def home():
             <th>거래량평가</th>
             <th>외국인</th>
             <th>기관</th>
+            <th>수급평가</th>
             <th>상승률</th>
             <th>신호</th>
         </tr>
@@ -47,6 +50,7 @@ def home():
         volume_ratio = data["volume"] / avg_volume
         volume_grade = get_volume_grade(volume_ratio)
         flow = get_foreign_institution(code)
+        flow_grade = get_flow_grade(flow["foreign"], flow["institution"])
 
         signal = check_signal(data, volume_ratio)
         
@@ -69,6 +73,7 @@ def home():
             <td>{volume_grade}</td>
             <td>{flow['foreign']}</td>
             <td>{flow['institution']}</td>
+            <td>{flow_grade}</td>
             <td>{data['change_rate']}%</td>
             <td>{signal_text}</td>
         </tr>

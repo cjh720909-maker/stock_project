@@ -108,7 +108,23 @@ def get_volume_grade(volume_ratio):
         return "👀 관심"
 
     return "보통"
+def get_flow_grade(foreign, institution):
 
+    foreign_num = int(foreign.replace(",", ""))
+
+    institution_num = int(institution.replace(",", ""))
+
+    if foreign_num > 0 and institution_num > 0:
+        return "🟢 동반매수"
+
+    elif foreign_num > 0 and institution_num < 0:
+        return "🔵 외국인매수"
+
+    elif foreign_num < 0 and institution_num > 0:
+        return "🟠 기관매수"
+
+    else:
+        return "🔴 동반매도"
 def get_foreign_institution(code):
 
     url = f"https://finance.naver.com/item/main.naver?code={code}"
