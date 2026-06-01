@@ -50,16 +50,13 @@ def get_stock_data(code):
     }
 
 def get_average_volume(code):
+
     url = f"https://finance.naver.com/item/sise_day.naver?code={code}"
+
     headers = {"User-Agent": "Mozilla/5.0"}
 
     res = requests.get(url, headers=headers)
     res.encoding = "euc-kr"
-
-    soup = BeautifulSoup(res.text, "html.parser")
-    text = soup.text
-
-    index = text.find("거래량")
 
     soup = BeautifulSoup(res.text, "html.parser")
 
@@ -67,17 +64,23 @@ def get_average_volume(code):
 
     volumes = []
 
-    for i in range(2, 7):
-        text = rows[i].get_text(" ", strip=True)
+    for row in rows:
 
-        parts = text.split()
+        parts = row.get_text(" ", strip=True).split()
 
-        volume = parts[-1]
+        if len(parts) >= 8:
 
-        volume = to_int(volume)
+            volume = parts[-1]
 
-        volumes.append(volume)
+            volume = to_int(volume)
+
+            volumes.append(volume)
+
+        if len(volumes) == 5:
+            break
+
     average = sum(volumes) / len(volumes)
+
     return average
 
 def check_signal(data, volume_ratio):
@@ -97,6 +100,16 @@ def load_watchlist():
         codes = json.load(file)
 
     return codes
+def save_watchlist(codes):
+
+    with open("watchlist.json", "w", encoding="utf-8") as file:
+        json.dump(
+            codes,
+            file,
+            ensure_ascii=False,
+            indent=4
+        )
+
 def get_volume_grade(volume_ratio):
     if volume_ratio >= 3:
         return "💥 거래량폭발"
@@ -142,80 +155,22 @@ def get_foreign_institution(code):
 
     rows = table.find_all("tr")
 
-    today_row = rows[2]
+    for row in rows:
 
-    cols = today_row.find_all("td")
+        cols = row.find_all("td")
 
-    foreign = cols[2].get_text(strip=True)
+        if len(cols) == 4:
 
-    institution = cols[3].get_text(strip=True)
+            foreign = cols[2].get_text(strip=True)
+
+            institution = cols[3].get_text(strip=True)
+
+            return {
+                "foreign": foreign,
+                "institution": institution
+            }
 
     return {
-        "foreign": foreign,
-        "institution": institution
+        "foreign": "0",
+        "institution": "0"
     }
-    
-    
-def test_foreign_data(code):
-
-    url = f"https://finance.naver.com/item/main.naver?code={code}"
-
-    headers = {"User-Agent": "Mozilla/5.0"}
-
-    res = requests.get(url, headers=headers)
-    res.encoding = "euc-kr"
-
-    soup = BeautifulSoup(res.text, "html.parser")
-
-    iframes = soup.find_all("iframe")
-
-    print("iframe 개수:", len(iframes))
-
-    for i, iframe in enumerate(iframes):
-        print("iframe 번호:", i)
-        print(iframe)
-        print("=" * 50)
-
-    tables = soup.find_all("table")
-
-    print("테이블 개수:", len(tables))
-    for i, table in enumerate(tables):
-        print("테이블:", i)
-
-        text = table.get_text(" ", strip=True)
-
-        print(text[:300])
-
-        print("=" * 50)
-
-    table = tables[3]
-
-    rows = table.find_all("tr")
-
-    print("행 개수:", len(rows))
-
-    for i, row in enumerate(rows):
-        print("행 번호:", i)
-
-        cols = row.get_text(" ", strip=True)
-
-        print(cols)
-
-        print("=" * 50)
-
-    today_row = rows[2]
-
-    cols = today_row.find_all("td")
-
-    print("칸 개수:", len(cols))
-
-    for i, col in enumerate(cols):
-        print(i, col.get_text(strip=True))
-
-
-if __name__ == "__main__":
-
-    data = get_foreign_institution("005930")
-
-    print(data)
-    
