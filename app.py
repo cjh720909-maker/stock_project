@@ -8,7 +8,7 @@ from stock import check_signal
 from stock import SIGNAL, STRONG_SIGNAL, NO_SIGNAL
 from stock import get_volume_grade
 from stock import get_flow_grade
-
+from stock import get_news
 
 app = Flask(__name__)
 
@@ -51,6 +51,40 @@ def delete_stock(name):
     </script>
     """
 
+@app.route("/news/<code>")
+def show_news(code):
+
+    codes = load_watchlist()
+
+    name = code
+
+    for stock_name, info in codes.items():
+
+        if info["code"] == code:
+            name = stock_name
+            break
+
+    news = get_news(code)
+
+    result = f"<h1>{name} 뉴스</h1>"
+
+    for i, item in enumerate(news, start=1):
+
+        result += f"""
+        <p>
+            {i}. {item['title']}
+            <br>
+            <a href="{item['link']}" target="_blank">
+                기사 읽기
+            </a>
+        </p>
+        """
+    result += """
+    <br><br>
+    <a href="/">메인으로 돌아가기</a>
+    """
+       
+    return result
 @app.route("/")
 def home():
 
@@ -160,7 +194,12 @@ def home():
             <td>{flow['institution']}</td>
             <td>{flow_grade}</td>
             <td>{data['change_rate']}%</td>
-            <td>{signal_text}</td>
+            <td>{signal_text}</td>            
+            <td>
+                <a href="/news/{code}">
+                    뉴스
+                </a>
+            </td>
             <td>
                 <a href="/delete/{name}">
                     삭제

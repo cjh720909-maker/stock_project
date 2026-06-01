@@ -174,3 +174,46 @@ def get_foreign_institution(code):
         "foreign": "0",
         "institution": "0"
     }
+
+def get_news(code):
+
+    url = f"https://finance.naver.com/item/main.naver?code={code}"
+
+    headers = {"User-Agent": "Mozilla/5.0"}
+
+    res = requests.get(url, headers=headers)
+
+    soup = BeautifulSoup(res.text, "html.parser")
+
+    links = soup.find_all("a")
+
+    news_list = []
+
+    for link in links:
+
+        title = link.get_text(strip=True)
+        href = link.get("href")
+
+        if not title:
+            continue
+        if not href:
+            continue
+
+        if "@code@" in title:
+            continue
+
+        if "관련" in title:
+            continue
+
+        if len(title) < 15:
+            continue
+
+        news_list.append({
+            "title": title,
+            "link": "https://finance.naver.com" + href
+        })
+
+        if len(news_list) == 5:
+            break
+
+    return news_list
