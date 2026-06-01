@@ -80,11 +80,12 @@ def get_average_volume(code):
     average = sum(volumes) / len(volumes)
     return average
 
-def check_signal(data):
-    if data["change_rate"] >= 5 and data["volume"] >= 1000000:
+def check_signal(data, volume_ratio):
+
+    if data["change_rate"] >= 5 and volume_ratio >= 2:
         return STRONG_SIGNAL
 
-    elif data["change_rate"] >= 3 and data["volume"] >= 500000:
+    elif data["change_rate"] >= 3 and volume_ratio >= 1.5:
         return SIGNAL
 
     else:
@@ -107,3 +108,98 @@ def get_volume_grade(volume_ratio):
         return "👀 관심"
 
     return "보통"
+
+def get_foreign_institution(code):
+
+    url = f"https://finance.naver.com/item/main.naver?code={code}"
+
+    headers = {"User-Agent": "Mozilla/5.0"}
+
+    res = requests.get(url, headers=headers)
+    res.encoding = "euc-kr"
+
+    soup = BeautifulSoup(res.text, "html.parser")
+
+    tables = soup.find_all("table")
+
+    table = tables[3]
+
+    rows = table.find_all("tr")
+
+    today_row = rows[2]
+
+    cols = today_row.find_all("td")
+
+    foreign = cols[2].get_text(strip=True)
+
+    institution = cols[3].get_text(strip=True)
+
+    return {
+        "foreign": foreign,
+        "institution": institution
+    }
+    
+    
+def test_foreign_data(code):
+
+    url = f"https://finance.naver.com/item/main.naver?code={code}"
+
+    headers = {"User-Agent": "Mozilla/5.0"}
+
+    res = requests.get(url, headers=headers)
+    res.encoding = "euc-kr"
+
+    soup = BeautifulSoup(res.text, "html.parser")
+
+    iframes = soup.find_all("iframe")
+
+    print("iframe 개수:", len(iframes))
+
+    for i, iframe in enumerate(iframes):
+        print("iframe 번호:", i)
+        print(iframe)
+        print("=" * 50)
+
+    tables = soup.find_all("table")
+
+    print("테이블 개수:", len(tables))
+    for i, table in enumerate(tables):
+        print("테이블:", i)
+
+        text = table.get_text(" ", strip=True)
+
+        print(text[:300])
+
+        print("=" * 50)
+
+    table = tables[3]
+
+    rows = table.find_all("tr")
+
+    print("행 개수:", len(rows))
+
+    for i, row in enumerate(rows):
+        print("행 번호:", i)
+
+        cols = row.get_text(" ", strip=True)
+
+        print(cols)
+
+        print("=" * 50)
+
+    today_row = rows[2]
+
+    cols = today_row.find_all("td")
+
+    print("칸 개수:", len(cols))
+
+    for i, col in enumerate(cols):
+        print(i, col.get_text(strip=True))
+
+
+if __name__ == "__main__":
+
+    data = get_foreign_institution("005930")
+
+    print(data)
+    
