@@ -252,4 +252,16 @@ def get_industry_rank():
             "change": change
         })
 
-    return industries[:10]
+    return industries
+
+def get_my_industries():
+
+    codes = load_watchlist()
+
+    industries = set()
+
+    for info in codes.values():
+
+        industries.add(info["industry"])
+
+    return sorted(list(industries))

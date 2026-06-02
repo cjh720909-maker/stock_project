@@ -10,6 +10,7 @@ from stock import get_volume_grade
 from stock import get_flow_grade
 from stock import get_news
 from stock import get_industry_rank
+from stock import get_my_industries
 
 app = Flask(__name__)
 
@@ -93,7 +94,9 @@ def home():
 
     codes = load_watchlist()
     industry_rank = get_industry_rank()
+    top10_industry = industry_rank[:10]
     industries = set()
+    my_industries = get_my_industries()
 
     for info in codes.values():
         industries.add(info["industry"])
@@ -125,7 +128,7 @@ def home():
     <h2>🔥 오늘의 강세 업종 TOP10</h2>
     """
 
-    for i, item in enumerate(industry_rank):
+    for i, item in enumerate(top10_industry):
 
         change_value = float(
             item["change"].replace("%", "").replace("+", "")
@@ -160,19 +163,49 @@ def home():
 
                 related_stocks.append(stock_name)
 
-    result += f"""
-    <span style="color:{color}">
-        {item["name"]} : {item["change"]}
-    </span>
+        result += f"""
+        <span style="color:{color}">
+            {item["name"]} : {item["change"]}
+        </span>
 
-    <br>
+        <br>
 
-    관심종목 :
-    {", ".join(related_stocks)}
-
-    <br><br>
-    """    
+        <br><br>
+        """    
     result += "<br><br>"
+    result += """
+    <h2>📌 내 관심 업종</h2>
+    """
+
+    for industry in my_industries:
+
+        related_stocks = []
+
+        for stock_name, info in codes.items():
+
+            if info["industry"] == industry:
+
+                related_stocks.append(stock_name)
+        
+        industry_change = "정보없음"
+
+        for item in industry_rank:
+
+            if item["name"] == industry:
+
+                industry_change = item["change"]
+                break
+
+        result += f"""
+        <b>{industry}</b>
+        ({industry_change})
+        <br>
+
+        관심종목 :
+        {", ".join(related_stocks)}
+
+        <br><br>
+        """
     result += f"""
     <form action="/add" method="post">
 
@@ -188,7 +221,7 @@ def home():
         <input type="submit" value="추가">
 
     </form>
-
+    
     <br>
 
     <table border="1" cellpadding="10">
