@@ -9,6 +9,7 @@ from stock import SIGNAL, STRONG_SIGNAL, NO_SIGNAL
 from stock import get_volume_grade
 from stock import get_flow_grade
 from stock import get_news
+from stock import get_industry_rank
 
 app = Flask(__name__)
 
@@ -91,6 +92,7 @@ def home():
     selected_industry = request.args.get("industry")
 
     codes = load_watchlist()
+    industry_rank = get_industry_rank()
     industries = set()
 
     for info in codes.values():
@@ -116,6 +118,19 @@ def home():
         <a href="/?industry={industry}">
             {industry}
         </a>
+        """
+    result += """
+    <br><br>
+
+    <h2>🔥 오늘의 강세 업종 TOP10</h2>
+    """
+
+    for item in industry_rank:
+
+        result += f"""
+        {item["name"]} :
+        {item["change"]}
+        <br>
         """
     result += "<br><br>"
     result += f"""

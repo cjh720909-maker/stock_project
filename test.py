@@ -1,26 +1,47 @@
 import requests
 from bs4 import BeautifulSoup
 
-url = "https://finance.naver.com/item/main.naver?code=005930"
 
-headers = {
-    "User-Agent": "Mozilla/5.0"
-}
+def test_industry_rank():
 
-res = requests.get(url, headers=headers)
+    url = "https://finance.naver.com/sise/sise_group.naver?type=upjong"
 
-soup = BeautifulSoup(res.text, "html.parser")
+    headers = {
+        "User-Agent": "Mozilla/5.0"
+    }
 
-links = soup.find_all("a")
+    res = requests.get(url, headers=headers)
 
-for i, link in enumerate(links):
+    soup = BeautifulSoup(res.text, "html.parser")
 
-    text = link.get_text(strip=True)
+    table = soup.find_all("table")[0]
 
-    href = link.get("href")
+    rows = table.find_all("tr")
 
-    if 43 <= i <= 55:
+    industries = []
 
-        print("=" * 50)
-        print(text)
-        print(href)
+    for row in rows:
+
+        cols = row.find_all("td")
+
+        if len(cols) < 2:
+            continue
+
+        name = cols[0].get_text(strip=True)
+
+        change = cols[1].get_text(strip=True)
+
+        industries.append({
+            "name": name,
+            "change": change
+        })
+
+    for item in industries[:10]:
+
+        print(
+            item["name"],
+            item["change"]
+        )
+        
+if __name__ == "__main__":
+    test_industry_rank()
