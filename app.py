@@ -152,12 +152,26 @@ def home():
         else:
             icon = "📌"
 
-        result += f"""
-        <span style="color:{color}">
-            {icon} {item["name"]} : {item["change"]}
-        </span>
-        <br>
-        """
+        related_stocks = []
+
+        for stock_name, info in codes.items():
+
+            if info["industry"] == item["name"]:
+
+                related_stocks.append(stock_name)
+
+    result += f"""
+    <span style="color:{color}">
+        {item["name"]} : {item["change"]}
+    </span>
+
+    <br>
+
+    관심종목 :
+    {", ".join(related_stocks)}
+
+    <br><br>
+    """    
     result += "<br><br>"
     result += f"""
     <form action="/add" method="post">
