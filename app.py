@@ -125,11 +125,37 @@ def home():
     <h2>🔥 오늘의 강세 업종 TOP10</h2>
     """
 
-    for item in industry_rank:
+    for i, item in enumerate(industry_rank):
+
+        change_value = float(
+            item["change"].replace("%", "").replace("+", "")
+        )
+
+        if change_value >= 5:
+            color = "red"
+
+        elif change_value >= 2:
+            color = "orange"
+
+        else:
+            color = "green"
+
+        if i == 0:
+            icon = "🥇"
+
+        elif i == 1:
+            icon = "🥈"
+
+        elif i == 2:
+            icon = "🥉"
+
+        else:
+            icon = "📌"
 
         result += f"""
-        {item["name"]} :
-        {item["change"]}
+        <span style="color:{color}">
+            {icon} {item["name"]} : {item["change"]}
+        </span>
         <br>
         """
     result += "<br><br>"
