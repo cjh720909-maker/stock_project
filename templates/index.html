@@ -1,0 +1,46 @@
+<html>
+
+<head>
+    <title>주식 감시 시스템</title>
+</head>
+<a href="/">📊 대시보드</a>
+|
+<a href="/watchlist">📋 관심종목 관리</a>
+
+<hr>
+
+<body>
+
+    <h1>주식 감시 시스템</h1>
+
+    <h2>🔥 오늘의 강세 업종 TOP10</h2>
+
+    {% for item in top10_industry %}
+    <br>
+    {{ item.name }}
+    :
+    {{ item.change }}
+
+
+    {% endfor %}
+
+    <h2>📌 내 관심 업종</h2>
+
+    {% for industry in my_industries %}
+    <br>
+    <b>{{ industry }}</b>
+
+    {% for stock_name, info in codes.items() %}
+
+    {% if info.industry == industry %}
+    {{ stock_name }}
+    {% endif %}
+
+    {% endfor %}
+
+    {% endfor %}
+    <hr>
+
+</body>
+
+</html>

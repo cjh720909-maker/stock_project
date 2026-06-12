@@ -1,0 +1,128 @@
+<html>
+
+<head>
+    <title>관심종목 관리</title>
+</head>
+<a href="/">📊 대시보드</a>
+|
+<a href="/watchlist">📋 관심종목 관리</a>
+
+<hr>
+
+<body>
+    <h1>관심종목 관리</h1>
+    <a href="/watchlist">전체</a>
+
+    {% for industry in industries %}
+    |
+    <a href="/watchlist?industry={{ industry }}">
+        {{ industry }}
+    </a>
+    {% endfor %}
+
+
+    <h2>➕ 종목 추가</h2>
+
+    <form action="/add" method="post">
+
+        종목명 :
+        <input type="text" name="name">
+
+        종목코드 :
+        <input type="text" name="code">
+
+        업종 :
+        <input type="text" name="industry">
+
+        <input type="submit" value="추가">
+
+    </form>
+
+    <br>
+    <table border="1" cellpadding="10">
+
+        <tr>
+            <th>종목명</th>
+            <th>업종</th>
+            <th>현재가</th>
+            <th>상승률</th>
+            <th>거래량</th>
+            <th>배수</th>
+            <th>외인</th>
+            <th>기관</th>
+            <th>신호</th>
+            <th>뉴스</th>
+            <th>삭제</th>
+        </tr>
+
+        {% for stock in stocks %}
+
+        <tr>
+
+            <td>{{ stock.name }}</td>
+            <td>{{ stock.industry }}</td>
+            <td>{{ "{:,}".format(stock.price) }}</td>
+            <td>
+                <span style="
+                    color:{{ stock.change_color }};
+                    font-weight:bold;
+                ">
+                    {{ stock.change_rate }}%
+                </span>
+            </td>
+            <td>{{ "{:,}".format(stock.volume) }}</td>
+            <td>
+
+                <span style="
+                    color:{{ stock.volume_color }};
+                    font-weight:bold;
+                ">
+                    {{ stock.volume_display }}
+                </span>
+
+                {{ stock.volume_icon }}
+
+            </td>
+            <td>
+
+                <span style="
+            color:{{ stock.foreign_color }};
+            font-weight:bold;
+                ">
+                    {{ stock.foreign }}
+                </span>
+
+            </td>
+
+            <td>
+
+                <span style="
+                    color:{{ stock.institution_color }};
+                    font-weight:bold;
+                ">
+                    {{ stock.institution }}
+                </span>
+
+            </td>
+            <td>{{ stock.signal_text|safe }}</td>
+            <td>
+                <a href="/news/{{ stock.code }}">
+                    뉴스
+                </a>
+            </td>
+            <td>
+                <a style="color:red" href="/delete/{{ stock.name }}"
+                    onclick="return confirm('{{ stock.name }} 종목을 삭제하시겠습니까?')">
+                    🗑️
+                </a>
+            </td>
+
+        </tr>
+
+        {% endfor %}
+
+    </table>
+
+</body>
+
+</html>

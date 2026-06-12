@@ -1,5 +1,6 @@
 from flask import Blueprint
 from flask import request
+from flask import render_template
 
 from stock import *
 
@@ -11,176 +12,104 @@ stock_bp = Blueprint(
 @stock_bp.route("/")
 def home():
 
-    selected_industry = request.args.get("industry")
-
     codes = load_watchlist()
+
     industry_rank = get_industry_rank()
+
     top10_industry = industry_rank[:10]
+
     industries = set()
+
     my_industries = get_my_industries()
 
     for info in codes.values():
-        industries.add(info["industry"])
-
-    result = """
-        
-    <html>
-    <head>
-        <title>주식 감시 시스템</title>
-    </head>
-    <body>
-
-    <h1>주식 감시 시스템</h1>
-    """
-    result += """
-    <a href="/">전체</a>
-    """    
-    for industry in sorted(industries):
-
-        result += f"""
-        |
-        <a href="/?industry={industry}">
-            {industry}
-        </a>
-        """
-    result += """
-    <br><br>
-
-    <h2>🔥 오늘의 강세 업종 TOP10</h2>
-    """
-
-    for i, item in enumerate(top10_industry):
-
-        change_value = float(
-            item["change"].replace("%", "").replace("+", "")
+        industries.add(
+            info["industry"]
         )
 
-        if change_value >= 5:
-            color = "red"
-
-        elif change_value >= 2:
-            color = "orange"
-
-        else:
-            color = "green"
-
-        if i == 0:
-            icon = "🥇"
-
-        elif i == 1:
-            icon = "🥈"
-
-        elif i == 2:
-            icon = "🥉"
-
-        else:
-            icon = "📌"
-
-        related_stocks = []
-
-        for stock_name, info in codes.items():
-
-            if info["industry"] == item["name"]:
-
-                related_stocks.append(stock_name)
-
-        result += f"""
-        <span style="color:{color}">
-            {item["name"]} : {item["change"]}
-        </span>
-
-        <br>
-
-        <br><br>
-        """    
-    result += "<br><br>"
-    result += """
-    <h2>📌 내 관심 업종</h2>
-    """
-
-    for industry in my_industries:
-
-        related_stocks = []
-
-        for stock_name, info in codes.items():
-
-            if info["industry"] == industry:
-
-                related_stocks.append(stock_name)
-        
-        industry_change = "정보없음"
-
-        for item in industry_rank:
-
-            if item["name"] == industry:
-
-                industry_change = item["change"]
-                break
-
-        result += f"""
-        <b>{industry}</b>
-        ({industry_change})
-        <br>
-
-        관심종목 :
-        {", ".join(related_stocks)}
-
-        <br><br>
-        """
-    result += f"""
-    <form action="/add" method="post">
-
-        종목명 :
-        <input type="text" name="name">
-
-        종목코드 :
-        <input type="text" name="code">
-
-        업종 :
-        <input type="text" name="industry">
-
-        <input type="submit" value="추가">
-
-    </form>
+    return render_template(
+        "index.html",
+        industries=sorted(industries),
+        top10_industry=top10_industry,
+        my_industries=my_industries,
+        codes=codes,
+        industry_rank=industry_rank
+    )
     
-    <br>
+@stock_bp.route("/watchlist")
+def watchlist():
+    import time
+    start = time.time()
 
-    <table border="1" cellpadding="10">
-        <tr>
-            <th>종목명</th>
-            <th>업종</th>
-            <th>현재가</th>
-            <th>거래량</th>
-            <th>평균거래량</th>
-            <th>거래량배수</th>
-            <th>거래량평가</th>
-            <th>외국인</th>
-            <th>기관</th>
-            <th>수급평가</th>
-            <th>상승률</th>
-            <th>신호</th>
-            <th>관리</th>
-        </tr>
-    """
+    codes = load_watchlist()
+    selected_industry = request.args.get(
+        "industry"
+    )
+    stocks = []
 
     for name, info in codes.items():
         if selected_industry:
 
             if info["industry"] != selected_industry:
                 continue
-
         code = info["code"]
         industry = info["industry"]
+        print("종목:", name)
+        t1 = time.time()
         data = get_stock_data(code)
+        print(name, "현재가", round(time.time() - t1, 2))
+
+        t1 = time.time()
         avg_volume = get_average_volume(code)
+        print(name, "평균거래량", round(time.time() - t1, 2))
 
         volume_ratio = data["volume"] / avg_volume
-        volume_grade = get_volume_grade(volume_ratio)
-        flow = get_foreign_institution(code)
-        flow_grade = get_flow_grade(flow["foreign"], flow["institution"])
-
-        signal = check_signal(data, volume_ratio)
         
+        volume_grade = get_volume_grade(volume_ratio)
+        if volume_ratio >= 3:
+            volume_color = "red"
+            volume_icon = "🚀"
+
+        elif volume_ratio >= 1.5:
+            volume_color = "orange"
+            volume_icon = "👀"
+
+        else:
+            volume_color = "black"
+            volume_icon = ""
+
+        t1 = time.time()
+        flow = get_foreign_institution(code)
+        print(name, "수급", round(time.time() - t1, 2))
+        foreign_value = int(
+            flow["foreign"]
+            .replace(",", "")
+        )
+
+        institution_value = int(
+            flow["institution"]
+            .replace(",", "")
+        )
+        if foreign_value > 0:
+            foreign_color = "red"
+        elif foreign_value < 0:
+            foreign_color = "blue"
+        else:
+            foreign_color = "black"
+
+        if institution_value > 0:
+            institution_color = "red"
+        elif institution_value < 0:
+            institution_color = "blue"
+        else:
+            institution_color = "black"
+
+
+        signal = check_signal(
+            data,
+            volume_ratio
+        )
+
         if signal == STRONG_SIGNAL:
             signal_text = "<span style='color:red'>🚀 강한급등</span>"
 
@@ -189,38 +118,42 @@ def home():
 
         else:
             signal_text = ""
-
-        result += f"""
-        <tr>
-           <td>{name}</td>
-           <td>{industry}</td>
-            <td>{data['price']:,}</td>
-            <td>{data['volume']:,}</td>
-            <td>{avg_volume:,.0f}</td>
-            <td>{volume_ratio:.2f}배</td>
-            <td>{volume_grade}</td>
-            <td>{flow['foreign']}</td>
-            <td>{flow['institution']}</td>
-            <td>{flow_grade}</td>
-            <td>{data['change_rate']}%</td>
-            <td>{signal_text}</td>            
-            <td>
-                <a href="/news/{code}">
-                    뉴스
-                </a>
-            </td>
-            <td>
-                <a href="/delete/{name}">
-                    삭제
-                </a>
-            </td>
-        </tr>
-        """
-
-    result += """
-    </table>
-
-    </body>
-    </html>
-    """
-    return result
+        
+        if data["change_rate"] > 0:
+            change_color = "red"
+        elif data["change_rate"] < 0:
+            change_color = "blue"
+        else:
+            change_color = "black"
+        stocks.append({
+            "name": name,
+            "industry": industry,
+            "price": data["price"],
+            "volume": data["volume"],
+            "volume_display": f"{volume_ratio:.1f}",
+            "volume_color": volume_color,
+            "volume_icon": volume_icon,
+            "foreign": flow["foreign"],
+            "institution": flow["institution"],
+            "foreign_color": foreign_color,
+            "institution_color": institution_color,
+            "change_rate": data["change_rate"],
+            "change_color": change_color,
+            "signal_text": signal_text,
+            "code": code
+        })
+    print(
+        "걸린시간:",
+        round(time.time() - start, 2),
+        "초"
+    )
+    return render_template(
+        "watchlist.html",
+        stocks=stocks,
+        industries=sorted(
+            set(
+                info["industry"]
+                for info in codes.values()
+            )
+        )
+    )
