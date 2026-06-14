@@ -1,0 +1,95 @@
+<html>
+
+<head>
+    <title>종목 수정</title>
+</head>
+
+<body>
+
+    <h1>종목 수정</h1>
+
+    <a href="/">📊 대시보드</a>
+    |
+    <a href="/watchlist">📋 관심종목 관리</a>
+
+    <hr>
+
+    <form action="/update/{{ name }}" method="post">
+
+        종목명 :
+        <b>{{ name }}</b>
+
+        <br><br>
+
+        종목코드 :
+        <input type="text" name="code" value="{{ stock.code }}">
+
+        업종 :
+        <input type="text" name="industry" value="{{ stock.industry }}">
+
+        상태 :
+        <select name="status">
+            <option value="관찰중" {% if stock.status=="관찰중" %}selected{% endif %}>관찰중</option>
+            <option value="보유중" {% if stock.status=="보유중" %}selected{% endif %}>보유중</option>
+            <option value="매도완료" {% if stock.status=="매도완료" %}selected{% endif %}>매도완료</option>
+        </select>
+
+        <br><br>
+
+        매수일 :
+        <input type="date" name="buy_date" value="{{ stock.buy_date }}">
+
+        매입가 :
+        <input type="number" name="buy_price" value="{{ stock.buy_price }}">
+
+        보유수량 :
+        <input type="number" name="quantity" value="{{ stock.quantity }}">
+
+        <br><br>
+
+        매입이유 :
+        <br>
+        <textarea name="buy_reason" rows="4" cols="80">{{ stock.buy_reason }}</textarea>
+
+        <br><br>
+
+        매입이유 상태 :
+        <select name="buy_reason_valid">
+            <option value="Y" {% if stock.buy_reason_valid=="Y" %}selected{% endif %}>
+                유효
+            </option>
+            <option value="N" {% if stock.buy_reason_valid=="N" %}selected{% endif %}>
+                훼손
+            </option>
+        </select>
+
+
+        <br><br>
+
+        목표가 :
+        <input type="number" name="target_price" value="{{ stock.target_price }}">
+
+        손절가 :
+        <input type="number" name="stop_loss_price" value="{{ stock.stop_loss_price }}">
+
+        <br><br>
+
+        매도규칙 :
+        <br>
+        <textarea name="sell_rule" rows="4" cols="80">{{ stock.sell_rule }}</textarea>
+
+        <br><br>
+
+        메모 :
+        <br>
+        <textarea name="memo" rows="4" cols="80">{{ stock.memo }}</textarea>
+
+        <br><br>
+
+        <input type="submit" value="저장">
+
+    </form>
+
+</body>
+
+</html>

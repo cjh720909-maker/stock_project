@@ -34,8 +34,50 @@
         업종 :
         <input type="text" name="industry">
 
-        <input type="submit" value="추가">
+        상태 :
+        <select name="status">
+            <option value="관찰중">관찰중</option>
+            <option value="보유중">보유중</option>
+            <option value="매도완료">매도완료</option>
+        </select>
 
+        <br><br>
+
+        매수일 :
+        <input type="date" name="buy_date">
+
+        매입가 :
+        <input type="number" name="buy_price">
+
+        보유수량 :
+        <input type="number" name="quantity">
+
+        <br><br>
+
+        매입이유 :
+        <input type="text" name="buy_reason" size="60">
+
+        <br><br>
+
+        목표가 :
+        <input type="number" name="target_price">
+
+        손절가 :
+        <input type="number" name="stop_loss_price">
+
+        <br><br>
+
+        매도규칙 :
+        <input type="text" name="sell_rule" size="80" value="+20% 도달 시 일부 매도, -10% 도달 시 손절 검토">
+
+        <br><br>
+
+        메모 :
+        <input type="text" name="memo" size="80">
+
+        <br><br>
+
+        <input type="submit" value="추가">
     </form>
 
     <br>
@@ -43,8 +85,13 @@
 
         <tr>
             <th>종목명</th>
+            <th>상세</th>
             <th>업종</th>
             <th>현재가</th>
+            <th>매입가</th>
+            <th>수익률</th>
+            <th>목표/손절</th>
+            <th>판단</th>
             <th>상승률</th>
             <th>거래량</th>
             <th>배수</th>
@@ -52,6 +99,7 @@
             <th>기관</th>
             <th>신호</th>
             <th>뉴스</th>
+            <th>수정</th>
             <th>삭제</th>
         </tr>
 
@@ -60,8 +108,28 @@
         <tr>
 
             <td>{{ stock.name }}</td>
+            <td>
+                <a href="/stock/{{ stock.name }}">
+                    상세
+                </a>
+            </td>
             <td>{{ stock.industry }}</td>
             <td>{{ "{:,}".format(stock.price) }}</td>
+            <td>{{ stock.buy_price }}</td>
+
+            <td>
+                {% if stock.profit_rate != "" %}
+                {{ stock.profit_rate }}%
+                {% endif %}
+            </td>
+
+            <td>
+                목표 {{ stock.target_price }}
+                <br>
+                손절 {{ stock.stop_loss_price }}
+            </td>
+
+            <td>{{ stock.decision }}</td>
             <td>
                 <span style="
                     color:{{ stock.change_color }};
@@ -108,6 +176,11 @@
             <td>
                 <a href="/news/{{ stock.code }}">
                     뉴스
+                </a>
+            </td>
+            <td>
+                <a href="/edit/{{ stock.name }}">
+                    수정
                 </a>
             </td>
             <td>

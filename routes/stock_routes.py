@@ -125,6 +125,78 @@ def watchlist():
             change_color = "blue"
         else:
             change_color = "black"
+
+        buy_price = info.get("buy_price", "")
+
+        profit_rate = ""
+
+        target_price = info.get("target_price", "")
+        stop_loss_price = info.get("stop_loss_price", "")
+
+        decision = "관찰중"
+
+        if buy_price:
+            buy_price_value = int(buy_price)
+            profit_rate = round(
+                ((data["price"] - buy_price_value) / buy_price_value) * 100,
+                2
+            )
+
+            if target_price and data["price"] >= int(target_price):
+                decision = "목표가 도달: 일부 매도 검토"
+
+            elif stop_loss_price and data["price"] <= int(stop_loss_price):
+                decision = "손절가 도달: 매도 검토"
+
+            elif profit_rate > 0:
+                decision = "수익 중: 관찰"
+
+            elif profit_rate < 0:
+                decision = "손실 중: 감정 매도 금지"
+
+            else:
+                decision = "보유 유지"
+
+        buy_price = info.get("buy_price", "")
+
+        profit_rate = ""
+        decision = "관찰중"
+
+        target_price = info.get("target_price", "")
+        stop_loss_price = info.get("stop_loss_price", "")
+
+        if buy_price:
+
+            buy_price_value = int(buy_price)
+
+            profit_rate = round(
+                (
+                    (data["price"] - buy_price_value)
+                    / buy_price_value
+                ) * 100,
+                2
+            )
+
+            if target_price and data["price"] >= int(target_price):
+
+                decision = "🎯 목표가 도달"
+
+            elif stop_loss_price and data["price"] <= int(stop_loss_price):
+
+                decision = "🛑 손절가 도달"
+
+            elif profit_rate > 0:
+
+                decision = "👀 수익중"
+
+            elif profit_rate < 0:
+
+                decision = "⚠️ 손실중"
+
+            else:
+
+                decision = "보유 유지"
+
         stocks.append({
             "name": name,
             "industry": industry,
@@ -138,8 +210,18 @@ def watchlist():
             "foreign_color": foreign_color,
             "institution_color": institution_color,
             "change_rate": data["change_rate"],
+            "buy_price": buy_price,
+            "profit_rate": profit_rate,
+            "target_price": target_price,
+            "stop_loss_price": stop_loss_price,
+            "decision": decision,
             "change_color": change_color,
             "signal_text": signal_text,
+            "buy_price": buy_price,
+            "profit_rate": profit_rate,
+            "target_price": target_price,
+            "stop_loss_price": stop_loss_price,
+            "decision": decision,
             "code": code
         })
     print(
@@ -156,4 +238,78 @@ def watchlist():
                 for info in codes.values()
             )
         )
+    )
+@stock_bp.route("/stock/<name>")
+def stock_detail(name):
+
+    codes = load_watchlist()
+
+    stock = codes[name]
+
+    current_data = get_stock_data(
+        stock["code"]
+    )
+
+    current_price = current_data["price"]
+
+    buy_price = int(
+        stock.get("buy_price", 0) or 0
+    )
+
+    target_price = int(
+        stock.get("target_price", 0) or 0
+    )
+
+    stop_loss_price = int(
+        stock.get("stop_loss_price", 0) or 0
+    )
+
+    profit_rate = 0
+
+    if buy_price > 0:
+
+        profit_rate = round(
+            (
+                current_price - buy_price
+            ) / buy_price * 100,
+            2
+        )
+
+    decision = "관찰중"
+
+    if target_price > 0 and current_price >= target_price:
+
+        decision = "🎯 목표가 도달"
+
+    elif stop_loss_price > 0 and current_price <= stop_loss_price:
+
+        decision = "🛑 손절가 도달"
+
+    elif profit_rate > 10:
+
+        decision = "📈 수익 확대중"
+
+    elif profit_rate > 0:
+
+        decision = "👀 수익중"
+
+    elif profit_rate > -5:
+
+        decision = "⏳ 보유 유지"
+
+    else:
+
+        decision = "⚠️ 손실 확대 주의"
+
+    buy_reason_valid = stock.get("buy_reason_valid", "Y")
+
+    if buy_reason_valid == "N":
+        decision = "⚠ 매입이유 훼손: 재검토 필요"    
+    return render_template(
+        "stock_detail.html",
+        name=name,
+        stock=stock,
+        current_price=current_price,
+        profit_rate=profit_rate,
+        decision=decision
     )

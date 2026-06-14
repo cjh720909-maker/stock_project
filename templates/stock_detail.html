@@ -1,0 +1,102 @@
+<html>
+
+<head>
+    <title>{{ name }}</title>
+</head>
+
+<body>
+
+    <h1>{{ name }}</h1>
+
+    <a href="/watchlist">
+        ← 목록으로
+    </a>
+    <hr>
+    <h2>📊 현재 상태</h2>
+
+    현재가 :
+    {{ "{:,}".format(current_price) }}
+
+    <br><br>
+
+    수익률 :
+    {{ profit_rate }}%
+
+    <br><br>
+
+    판단 :
+
+    <b>
+        {{ decision }}
+    </b>
+
+    <hr>
+
+    종목코드 :
+    {{ stock.code }}
+
+    <br><br>
+
+    업종 :
+    {{ stock.industry }}
+
+    <br><br>
+
+    상태 :
+    {{ stock.status }}
+
+    <br><br>
+
+    매수일 :
+    {{ stock.buy_date }}
+
+    <br><br>
+
+    매입가 :
+    {{ stock.buy_price }}
+
+    <br><br>
+
+    보유수량 :
+    {{ stock.quantity }}
+
+    <hr>
+
+    <h3>매입이유</h3>
+
+    {{ stock.buy_reason }}
+    <h3>매입이유 상태</h3>
+
+    {% if stock.buy_reason_valid == "N" %}
+    <b style="color:red;">⚠ 훼손됨 - 재검토 필요</b>
+    {% else %}
+    <b style="color:green;">유효</b>
+    {% endif %}
+
+    <hr>
+
+    <h3>목표가</h3>
+
+    {{ stock.target_price }}
+
+    <br><br>
+
+    <h3>손절가</h3>
+
+    {{ stock.stop_loss_price }}
+
+    <hr>
+
+    <h3>매도규칙</h3>
+
+    {{ stock.sell_rule }}
+
+    <hr>
+
+    <h3>메모</h3>
+
+    {{ stock.memo }}
+
+</body>
+
+</html>

@@ -13,11 +13,29 @@
     },
     "LG씨엔에스": {
         "code": "064400",
-        "industry": "IT서비스"
+        "industry": "IT서비스",
+        "status": "관찰중",
+        "buy_date": "2026-05-14",
+        "buy_price": "73000",
+        "quantity": "50",
+        "buy_reason": "단타",
+        "target_price": "",
+        "stop_loss_price": "",
+        "sell_rule": "",
+        "memo": ""
     },
     "에코프로": {
         "code": "086520",
-        "industry": "화학"
+        "industry": "화학",
+        "status": "관찰중",
+        "buy_date": "2026-05-14",
+        "buy_price": "121000",
+        "quantity": "50",
+        "buy_reason": "",
+        "target_price": "",
+        "stop_loss_price": "",
+        "sell_rule": "",
+        "memo": ""
     },
     "LG전자": {
         "code": "066570",
@@ -25,7 +43,16 @@
     },
     "GS건설": {
         "code": "006360",
-        "industry": "건설"
+        "industry": "건설",
+        "status": "관찰중",
+        "buy_date": "2026-05-14",
+        "buy_price": "33500",
+        "quantity": "50",
+        "buy_reason": "단타",
+        "target_price": "",
+        "stop_loss_price": "",
+        "sell_rule": "",
+        "memo": ""
     },
     "현대차": {
         "code": "005380",
@@ -33,7 +60,16 @@
     },
     "대우건설": {
         "code": "047040",
-        "industry": "건설"
+        "industry": "건설",
+        "status": "관찰중",
+        "buy_date": "2026-05-14",
+        "buy_price": "30500",
+        "quantity": "50",
+        "buy_reason": "단타",
+        "target_price": "",
+        "stop_loss_price": "",
+        "sell_rule": "",
+        "memo": ""
     },
     "두산에너빌리티": {
         "code": "034020",
@@ -62,5 +98,31 @@
     "미래에셋증권": {
         "code": "006800",
         "industry": "증권"
+    },
+    "LG전자우": {
+        "code": "066575",
+        "industry": "전자제품",
+        "status": "관찰중",
+        "buy_date": "2026-05-14",
+        "buy_price": "63000",
+        "quantity": "50",
+        "buy_reason": "단타",
+        "target_price": "",
+        "stop_loss_price": "",
+        "sell_rule": "+20% 도달 시 일부 매도, -10% 도달 시 손절 검토",
+        "memo": ""
+    },
+    "삼성전자우": {
+        "code": "005935",
+        "industry": "반도체와반도체장비",
+        "status": "관찰중",
+        "buy_date": "2026-05-14",
+        "buy_price": "190000",
+        "quantity": "20",
+        "buy_reason": "단타",
+        "target_price": "",
+        "stop_loss_price": "",
+        "sell_rule": "+20% 도달 시 일부 매도, -10% 도달 시 손절 검토",
+        "memo": ""
     }
 }
