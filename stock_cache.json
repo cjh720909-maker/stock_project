@@ -1,0 +1,218 @@
+{
+    "005930": {
+        "data": {
+            "price": 340500,
+            "volume": 46319709,
+            "change_rate": 9.84
+        },
+        "avg_volume": 37593227.6,
+        "flow": {
+            "foreign": "-2,251,501",
+            "institution": "-4,359,775"
+        }
+    },
+    "000660": {
+        "data": {
+            "price": 2580000,
+            "volume": 7096302,
+            "change_rate": 0.98
+        },
+        "avg_volume": 6722678.4,
+        "flow": {
+            "foreign": "-937,255",
+            "institution": "-925,092"
+        }
+    },
+    "373220": {
+        "data": {
+            "price": 365500,
+            "volume": 353220,
+            "change_rate": 0.97
+        },
+        "avg_volume": 458446.0,
+        "flow": {
+            "foreign": "+76,763",
+            "institution": "-82,699"
+        }
+    },
+    "064400": {
+        "data": {
+            "price": 79300,
+            "volume": 830941,
+            "change_rate": -0.88
+        },
+        "avg_volume": 1364600.8,
+        "flow": {
+            "foreign": "+65,662",
+            "institution": "-86,645"
+        }
+    },
+    "086520": {
+        "data": {
+            "price": 107700,
+            "volume": 1067405,
+            "change_rate": 4.56
+        },
+        "avg_volume": 1013060.6,
+        "flow": {
+            "foreign": "+88,243",
+            "institution": "+25,633"
+        }
+    },
+    "066570": {
+        "data": {
+            "price": 204500,
+            "volume": 1449985,
+            "change_rate": 1.24
+        },
+        "avg_volume": 2252953.8,
+        "flow": {
+            "foreign": "-122,592",
+            "institution": "-125,854"
+        }
+    },
+    "006360": {
+        "data": {
+            "price": 25050,
+            "volume": 635260,
+            "change_rate": 1.83
+        },
+        "avg_volume": 947779.6,
+        "flow": {
+            "foreign": "+147,674",
+            "institution": "+27,251"
+        }
+    },
+    "005380": {
+        "data": {
+            "price": 509000,
+            "volume": 1238769,
+            "change_rate": -0.39
+        },
+        "avg_volume": 1366000.4,
+        "flow": {
+            "foreign": "-273,210",
+            "institution": "-103,280"
+        }
+    },
+    "047040": {
+        "data": {
+            "price": 19480,
+            "volume": 7816605,
+            "change_rate": 0.52
+        },
+        "avg_volume": 9286686.6,
+        "flow": {
+            "foreign": "0",
+            "institution": "0"
+        }
+    },
+    "034020": {
+        "data": {
+            "price": 90600,
+            "volume": 3053656,
+            "change_rate": 1.57
+        },
+        "avg_volume": 3659956.2,
+        "flow": {
+            "foreign": "+497,068",
+            "institution": "+109,136"
+        }
+    },
+    "035420": {
+        "data": {
+            "price": 199400,
+            "volume": 1455973,
+            "change_rate": -1.53
+        },
+        "avg_volume": 1487670.0,
+        "flow": {
+            "foreign": "-57,269",
+            "institution": "-205,527"
+        }
+    },
+    "009150": {
+        "data": {
+            "price": 1964000,
+            "volume": 1055857,
+            "change_rate": -1.31
+        },
+        "avg_volume": 1296442.2,
+        "flow": {
+            "foreign": "+30,862",
+            "institution": "-5,881"
+        }
+    },
+    "329180": {
+        "data": {
+            "price": 587000,
+            "volume": 269684,
+            "change_rate": -0.17
+        },
+        "avg_volume": 369002.0,
+        "flow": {
+            "foreign": "+74,850",
+            "institution": "-64,547"
+        }
+    },
+    "010140": {
+        "data": {
+            "price": 24600,
+            "volume": 3518694,
+            "change_rate": 1.23
+        },
+        "avg_volume": 4396075.0,
+        "flow": {
+            "foreign": "-345,064",
+            "institution": "-347,186"
+        }
+    },
+    "042660": {
+        "data": {
+            "price": 106000,
+            "volume": 1315530,
+            "change_rate": 1.44
+        },
+        "avg_volume": 2174283.8,
+        "flow": {
+            "foreign": "-37,380",
+            "institution": "-328,316"
+        }
+    },
+    "006800": {
+        "data": {
+            "price": 41750,
+            "volume": 3440048,
+            "change_rate": -0.95
+        },
+        "avg_volume": 3730840.2,
+        "flow": {
+            "foreign": "+1,497,598",
+            "institution": "-141,755"
+        }
+    },
+    "066575": {
+        "data": {
+            "price": 73000,
+            "volume": 178079,
+            "change_rate": 0.83
+        },
+        "avg_volume": 228560.2,
+        "flow": {
+            "foreign": "0",
+            "institution": "0"
+        }
+    },
+    "005935": {
+        "data": {
+            "price": 213500,
+            "volume": 4691289,
+            "change_rate": 5.43
+        },
+        "avg_volume": 4900319.2,
+        "flow": {
+            "foreign": "0",
+            "institution": "0"
+        }
+    }
+}

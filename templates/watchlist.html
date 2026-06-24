@@ -3,198 +3,216 @@
 <head>
     <title>관심종목 관리</title>
 </head>
-<a href="/">📊 대시보드</a>
+
+<style>
+    body {
+        font-size: 13px;
+    }
+
+    .top-menu {
+        margin-bottom: 15px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid #aaa;
+    }
+
+    .top-menu a {
+        padding: 4px 8px;
+        text-decoration: none;
+        border: 1px solid #ccc;
+        color: #333;
+    }
+
+    .top-menu .active {
+        background: #333;
+        color: white;
+        font-weight: bold;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: 90px 180px 90px 180px 90px 180px;
+        gap: 6px 10px;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    table {
+        font-size: 12px;
+        border-collapse: collapse;
+    }
+</style>
+
+<div class="top-menu">
+    <a href="/dashboard">📊 대시보드</a>
+    <a href="/watchlist" class="active">📋 관심종목 관리</a>
+    <a href="/watchlist?refresh=1">🔄 새로고침</a>
+</div>
+{% for industry in industries %}
 |
-<a href="/watchlist">📋 관심종목 관리</a>
+<a href="/watchlist?industry={{ industry }}">
+    {{ industry }}
+</a>
+{% endfor %}
 
-<hr>
-
-<body>
-    <h1>관심종목 관리</h1>
-    <a href="/watchlist">전체</a>
-
-    {% for industry in industries %}
-    |
-    <a href="/watchlist?industry={{ industry }}">
-        {{ industry }}
-    </a>
-    {% endfor %}
-
-
-    <h2>➕ 종목 추가</h2>
-
-    <form action="/add" method="post">
-
-        종목명 :
+<form action="/add" method="post">
+    <div class="form-grid">
+        <label>종목명</label>
         <input type="text" name="name">
 
-        종목코드 :
+        <label>종목코드</label>
         <input type="text" name="code">
 
-        업종 :
+        <label>업종</label>
         <input type="text" name="industry">
 
-        상태 :
+        <label>상태</label>
         <select name="status">
             <option value="관찰중">관찰중</option>
             <option value="보유중">보유중</option>
             <option value="매도완료">매도완료</option>
         </select>
 
-        <br><br>
-
-        매수일 :
+        <label>매수일</label>
         <input type="date" name="buy_date">
 
-        매입가 :
+        <label>매입가</label>
         <input type="number" name="buy_price">
 
-        보유수량 :
+        <label>보유수량</label>
         <input type="number" name="quantity">
 
-        <br><br>
+        <label>매입이유</label>
+        <input type="text" name="buy_reason">
 
-        매입이유 :
-        <input type="text" name="buy_reason" size="60">
-
-        <br><br>
-
-        목표가 :
+        <label>목표가</label>
         <input type="number" name="target_price">
 
-        손절가 :
+        <label>손절가</label>
         <input type="number" name="stop_loss_price">
 
-        <br><br>
+        <label>매도규칙</label>
+        <input type="text" name="sell_rule" value="+20% 일부 매도, -10% 손절">
 
-        매도규칙 :
-        <input type="text" name="sell_rule" size="80" value="+20% 도달 시 일부 매도, -10% 도달 시 손절 검토">
+        <label>메모</label>
+        <input type="text" name="memo">
+    </div>
 
-        <br><br>
+    <input type="submit" value="➕ 종목 추가">
+</form>
 
-        메모 :
-        <input type="text" name="memo" size="80">
+<table border="1" cellpadding="4" style="font-size:12px;">
+    <tr>
+        <th>종목명</th>
+        <th>상세</th>
+        <th>업종</th>
+        <th>현재가</th>
+        <th>매입가</th>
+        <th>수익률</th>
+        <th>목표/손절</th>
+        <th>판단</th>
+        <th>상승률</th>
+        <th>거래량</th>
+        <th>배수</th>
+        <th>외인</th>
+        <th>기관</th>
+        <th>신호</th>
+        <th>뉴스</th>
+        <th>수정</th>
+        <th>삭제</th>
+    </tr>
 
-        <br><br>
+    {% for stock in stocks %}
 
-        <input type="submit" value="추가">
-    </form>
+    <tr>
 
-    <br>
-    <table border="1" cellpadding="10">
+        <td>{{ stock.name }}</td>
+        <td>
+            <a href="/stock/{{ stock.name }}">
+                상세
+            </a>
+        </td>
+        <td>{{ stock.industry }}</td>
+        <td>{{ "{:,}".format(stock.price) }}</td>
+        <td>{{ stock.buy_price }}</td>
 
-        <tr>
-            <th>종목명</th>
-            <th>상세</th>
-            <th>업종</th>
-            <th>현재가</th>
-            <th>매입가</th>
-            <th>수익률</th>
-            <th>목표/손절</th>
-            <th>판단</th>
-            <th>상승률</th>
-            <th>거래량</th>
-            <th>배수</th>
-            <th>외인</th>
-            <th>기관</th>
-            <th>신호</th>
-            <th>뉴스</th>
-            <th>수정</th>
-            <th>삭제</th>
-        </tr>
+        <td>
+            {% if stock.profit_rate != "" %}
+            {{ stock.profit_rate }}%
+            {% endif %}
+        </td>
 
-        {% for stock in stocks %}
+        <td>
+            목표 {{ stock.target_price }}
+            <br>
+            손절 {{ stock.stop_loss_price }}
+        </td>
 
-        <tr>
-
-            <td>{{ stock.name }}</td>
-            <td>
-                <a href="/stock/{{ stock.name }}">
-                    상세
-                </a>
-            </td>
-            <td>{{ stock.industry }}</td>
-            <td>{{ "{:,}".format(stock.price) }}</td>
-            <td>{{ stock.buy_price }}</td>
-
-            <td>
-                {% if stock.profit_rate != "" %}
-                {{ stock.profit_rate }}%
-                {% endif %}
-            </td>
-
-            <td>
-                목표 {{ stock.target_price }}
-                <br>
-                손절 {{ stock.stop_loss_price }}
-            </td>
-
-            <td>{{ stock.decision }}</td>
-            <td>
-                <span style="
+        <td>{{ stock.decision }}</td>
+        <td>
+            <span style="
                     color:{{ stock.change_color }};
                     font-weight:bold;
                 ">
-                    {{ stock.change_rate }}%
-                </span>
-            </td>
-            <td>{{ "{:,}".format(stock.volume) }}</td>
-            <td>
+                {{ stock.change_rate }}%
+            </span>
+        </td>
+        <td>{{ "{:,}".format(stock.volume) }}</td>
+        <td>
 
-                <span style="
+            <span style="
                     color:{{ stock.volume_color }};
                     font-weight:bold;
                 ">
-                    {{ stock.volume_display }}
-                </span>
+                {{ stock.volume_display }}
+            </span>
 
-                {{ stock.volume_icon }}
+            {{ stock.volume_icon }}
 
-            </td>
-            <td>
+        </td>
+        <td>
 
-                <span style="
+            <span style="
             color:{{ stock.foreign_color }};
             font-weight:bold;
                 ">
-                    {{ stock.foreign }}
-                </span>
+                {{ stock.foreign }}
+            </span>
 
-            </td>
+        </td>
 
-            <td>
+        <td>
 
-                <span style="
+            <span style="
                     color:{{ stock.institution_color }};
                     font-weight:bold;
                 ">
-                    {{ stock.institution }}
-                </span>
+                {{ stock.institution }}
+            </span>
 
-            </td>
-            <td>{{ stock.signal_text|safe }}</td>
-            <td>
-                <a href="/news/{{ stock.code }}">
-                    뉴스
-                </a>
-            </td>
-            <td>
-                <a href="/edit/{{ stock.name }}">
-                    수정
-                </a>
-            </td>
-            <td>
-                <a style="color:red" href="/delete/{{ stock.name }}"
-                    onclick="return confirm('{{ stock.name }} 종목을 삭제하시겠습니까?')">
-                    🗑️
-                </a>
-            </td>
+        </td>
+        <td>{{ stock.signal_text|safe }}</td>
+        <td>
+            <a href="/news/{{ stock.code }}">
+                뉴스
+            </a>
+        </td>
+        <td>
+            <a href="/edit/{{ stock.name }}">
+                수정
+            </a>
+        </td>
+        <td>
+            <a style="color:red" href="/delete/{{ stock.name }}"
+                onclick="return confirm('{{ stock.name }} 종목을 삭제하시겠습니까?')">
+                🗑️
+            </a>
+        </td>
 
-        </tr>
+    </tr>
 
-        {% endfor %}
+    {% endfor %}
 
-    </table>
+</table>
 
 </body>
 

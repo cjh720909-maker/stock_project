@@ -1,7 +1,17 @@
 {
     "삼성전자": {
         "code": "005930",
-        "industry": "반도체와반도체장비"
+        "industry": "반도체와반도체장비",
+        "status": "관찰중",
+        "buy_date": "2026-06-01",
+        "buy_price": "200000",
+        "quantity": "300",
+        "buy_reason": "",
+        "target_price": "",
+        "stop_loss_price": "",
+        "sell_rule": "",
+        "buy_reason_valid": "Y",
+        "memo": ""
     },
     "SK하이닉스": {
         "code": "000660",

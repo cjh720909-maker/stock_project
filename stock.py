@@ -265,3 +265,29 @@ def get_my_industries():
         industries.add(info["industry"])
 
     return sorted(list(industries))
+
+import json
+import os
+from datetime import datetime
+
+CACHE_FILE = "stock_cache.json"
+
+
+def load_stock_cache():
+
+    if not os.path.exists(CACHE_FILE):
+        return {}
+
+    with open(CACHE_FILE, "r", encoding="utf-8") as file:
+        return json.load(file)
+
+
+def save_stock_cache(cache):
+
+    with open(CACHE_FILE, "w", encoding="utf-8") as file:
+        json.dump(
+            cache,
+            file,
+            ensure_ascii=False,
+            indent=4
+        )

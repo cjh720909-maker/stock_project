@@ -2,6 +2,7 @@ cd logistics_dispatch_v1
 
 python3 -m venv venv
 source venv/bin/activate
+python app.py
 
 pip install flask python-dotenv
 

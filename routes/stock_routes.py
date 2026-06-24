@@ -1,6 +1,7 @@
 from flask import Blueprint
 from flask import request
 from flask import render_template
+from flask import redirect
 
 from stock import *
 
@@ -10,6 +11,12 @@ stock_bp = Blueprint(
 )
 
 @stock_bp.route("/")
+def root():
+    return redirect("/watchlist")
+
+
+@stock_bp.route("/dashboard")
+
 def home():
 
     codes = load_watchlist()
@@ -38,14 +45,14 @@ def home():
     
 @stock_bp.route("/watchlist")
 def watchlist():
-    import time
-    start = time.time()
 
     codes = load_watchlist()
     selected_industry = request.args.get(
         "industry"
     )
     stocks = []
+    refresh = request.args.get("refresh")
+    cache = load_stock_cache()
 
     for name, info in codes.items():
         if selected_industry:
@@ -54,14 +61,25 @@ def watchlist():
                 continue
         code = info["code"]
         industry = info["industry"]
-        print("종목:", name)
-        t1 = time.time()
-        data = get_stock_data(code)
-        print(name, "현재가", round(time.time() - t1, 2))
+        if refresh != "1" and code in cache:
 
-        t1 = time.time()
-        avg_volume = get_average_volume(code)
-        print(name, "평균거래량", round(time.time() - t1, 2))
+            cached = cache[code]
+
+            data = cached["data"]
+            avg_volume = cached["avg_volume"]
+            flow = cached["flow"]
+
+        else:
+
+            data = get_stock_data(code)
+            avg_volume = get_average_volume(code)
+            flow = get_foreign_institution(code)
+
+            cache[code] = {
+                "data": data,
+                "avg_volume": avg_volume,
+                "flow": flow
+            }
 
         volume_ratio = data["volume"] / avg_volume
         
@@ -78,9 +96,6 @@ def watchlist():
             volume_color = "black"
             volume_icon = ""
 
-        t1 = time.time()
-        flow = get_foreign_institution(code)
-        print(name, "수급", round(time.time() - t1, 2))
         foreign_value = int(
             flow["foreign"]
             .replace(",", "")
@@ -125,37 +140,6 @@ def watchlist():
             change_color = "blue"
         else:
             change_color = "black"
-
-        buy_price = info.get("buy_price", "")
-
-        profit_rate = ""
-
-        target_price = info.get("target_price", "")
-        stop_loss_price = info.get("stop_loss_price", "")
-
-        decision = "관찰중"
-
-        if buy_price:
-            buy_price_value = int(buy_price)
-            profit_rate = round(
-                ((data["price"] - buy_price_value) / buy_price_value) * 100,
-                2
-            )
-
-            if target_price and data["price"] >= int(target_price):
-                decision = "목표가 도달: 일부 매도 검토"
-
-            elif stop_loss_price and data["price"] <= int(stop_loss_price):
-                decision = "손절가 도달: 매도 검토"
-
-            elif profit_rate > 0:
-                decision = "수익 중: 관찰"
-
-            elif profit_rate < 0:
-                decision = "손실 중: 감정 매도 금지"
-
-            else:
-                decision = "보유 유지"
 
         buy_price = info.get("buy_price", "")
 
@@ -217,18 +201,9 @@ def watchlist():
             "decision": decision,
             "change_color": change_color,
             "signal_text": signal_text,
-            "buy_price": buy_price,
-            "profit_rate": profit_rate,
-            "target_price": target_price,
-            "stop_loss_price": stop_loss_price,
-            "decision": decision,
             "code": code
         })
-    print(
-        "걸린시간:",
-        round(time.time() - start, 2),
-        "초"
-    )
+    save_stock_cache(cache)
     return render_template(
         "watchlist.html",
         stocks=stocks,
